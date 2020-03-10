@@ -12,10 +12,11 @@ spec:
   - name: deployment-name
     type: string
     description: name of the deployment to be patched
+
   tasks:
   - name: build-image
     taskRef:
-      name: buildah-v0-8-0
+      name: buildah
       kind: ClusterTask
     resources:
       inputs:
@@ -27,17 +28,26 @@ spec:
     params:
     - name: TLSVERIFY
       value: "false"
-  - name: create-upate-deployment
+
+  - name: apply-manifest
     taskRef:
-      name: oc-apply-deployment
+      name: oc-apply-manifest
     resources:
       inputs:
       - name: k8s-yamls-repo
         resource: my-source-repo
+    runAfter:
+      - build-image
+
+  - name: create-update-deployment
+    taskRef:
+      name: oc-update-deployment
+    resources:
+      inputs:
       - name: new-image
         resource: my-image-resource
     params:
     - name: deployment-name
       value: $(params.deployment-name)
     runAfter:
-    - build-image
+    - apply-manifest
