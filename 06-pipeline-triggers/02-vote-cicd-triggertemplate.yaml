@@ -44,7 +44,7 @@ spec:
     spec:
       pipelineRef:
         name: build-and-deploy
-      serviceAccount: 'pipeline'
+      serviceAccountName: 'tekton-triggers-sa'
       resources:
       - name: my-source-repo
         resourceRef:
